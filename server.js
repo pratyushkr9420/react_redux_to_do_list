@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const { conn, Task, User } = require('./db');
+const fs = require('fs');
 
 app.use('/dist', express.static('dist'));
 app.use('/assets', express.static('assets'));
@@ -66,6 +67,11 @@ app.listen(port, async()=> {
     const [moe, lucy, larry] = await Promise.all(
       ['moe', 'lucy', 'larry'].map( name => User.create({ name }))
     );
+    await trash.update({userId:moe.id})
+    fs.readFile('trash.png', 'base64', async(err,data) =>{
+      const image = `data:image/png;base64,${data}`;
+      await trash.update({ image });
+    })
   }
   catch(ex){
     console.log(ex);

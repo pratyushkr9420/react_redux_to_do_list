@@ -1,17 +1,31 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect,useState,useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { createTask } from './store';
 import { useNavigate } from "react-router-dom";
 
 const TaskCreate = () => {
+    const {users} = useSelector(state => state)
     const[name,setName] = useState('');
     const[isComplete,setIsComplete] = useState(false);
     const[priority,setPriority] = useState(5);
+    const[userId,setUserId] = useState('');
+    const[image,setImage] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const ref = useRef();
+    useEffect(()=> {
+        ref.current.addEventListener('change',(ev) => {
+            const file = ev.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.addEventListener('load',() => {
+                setImage(reader.result);
+            })
+        })
+    },[ref])
     const create = async(ev) => {
         ev.preventDefault();
-        await dispatch(createTask({name,isComplete,priority}))
+        await dispatch(createTask({name,isComplete,priority,userId,image}))
         navigate('/');
     }
     const priorities = [];
@@ -34,7 +48,19 @@ const TaskCreate = () => {
                     })
                 }
             </select>
-            <button>Create</button>
+            <select value={userId} onChange={ev => setUserId(ev.target.value)}>
+                <option value={''}>--Choose a user--</option>
+                {
+                    users.map(user => {
+                        return (
+                            <option value={user.id} key={user.id}>{user.name}</option>
+                        )
+                    })
+                }
+            </select>
+            <input type='file' ref={ref}/>
+            {!!image && <img src={image} style={{width:'100px'}}/>}
+            <button disabled={!userId}>Create</button>
         </form>
     )
 

@@ -29,7 +29,7 @@ const App = () => {
                 <Route path="/"  element={<Tasks/>}/>
                 <Route path="/tasks/create" element={<TaskCreate/>}/>
                 <Route path="/tasks/users" element={<Users/>}/>
-                <Route path="/tasks/pending" element={<TasksPending/>}/>
+                <Route path="/tasks/pending" element={<Tasks/>}/>
                 <Route path="/tasks/:id" element={<TaskEdit/>}/>
             </Routes>
         </div>
